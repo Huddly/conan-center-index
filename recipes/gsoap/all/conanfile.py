@@ -101,3 +101,4 @@ class ConanFileDefault(ConanFile):
         cmake.install()
         shutil.move(os.path.join(self.package_folder, 'import'), os.path.join(self.package_folder, 'bin', 'import'))
         shutil.move(os.path.join(self.package_folder, 'plugin'), os.path.join(self.package_folder, 'bin', 'plugin'))
+        shutil.move(os.path.join(self.package_folder, 'custom'), os.path.join(self.package_folder, 'bin', 'custom')) 

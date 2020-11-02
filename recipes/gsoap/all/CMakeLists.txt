@@ -24,6 +24,7 @@ endif()
 # Including the plugin source/headers import headers and typemap
 install(FILES ${CMAKE_SOURCE_DIR}/${GSOAP_PATH}/gsoap/typemap.dat DESTINATION res)
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/${GSOAP_PATH}/gsoap/plugin DESTINATION . FILES_MATCHING PATTERN "*.h" PATTERN "*.c")
+install(DIRECTORY ${CMAKE_SOURCE_DIR}/${GSOAP_PATH}/gsoap/custom DESTINATION . FILES_MATCHING PATTERN "*.h" PATTERN "*.c")
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/${GSOAP_PATH}/gsoap/import DESTINATION .
                 FILES_MATCHING PATTERN "*.h" )
 # Libraries
