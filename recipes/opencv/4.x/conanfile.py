@@ -119,7 +119,7 @@ class OpenCVConan(ConanFile):
 
     @property
     def _protobuf_version(self):
-        return "3.17.1"
+        return "3.21.9"
 
     def export_sources(self):
         export_conandata_patches(self)
