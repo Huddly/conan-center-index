@@ -21,7 +21,6 @@ def upload_recipe(package_name: str, remote: str, version='*', force = False):
     cmd = ['conan', 'upload', '--only-recipe', '--confirm', '-r', remote]
     if force:
         cmd.append('--force')
-    cmd.append('--dry-run')
     cmd.append(f"{package_name}/{version}")
     subprocess.run(cmd)
 
