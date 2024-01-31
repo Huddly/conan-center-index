@@ -70,7 +70,7 @@ class GLibConan(ConanFile):
         if self.options.get_safe("with_elf"):
             self.requires("libelf/0.8.13")
         if self.options.get_safe("with_mount"):
-            self.requires("libmount/2.39")
+            self.requires("libmount/2.39.2")
         if self.options.get_safe("with_selinux"):
             self.requires("libselinux/3.5")
         if self.settings.os != "Linux":
@@ -105,20 +105,23 @@ class GLibConan(ConanFile):
 
     def _patch_sources(self):
         apply_conandata_patches(self)
-        replace_in_file(self,
+        replace_in_file(
+            self,
             os.path.join(self.source_folder, "meson.build"),
             "subdir('fuzzing')",
             "#subdir('fuzzing')",
         )  # https://gitlab.gnome.org/GNOME/glib/-/issues/2152
         if self.settings.os != "Linux":
             # allow to find gettext
-            replace_in_file(self,
+            replace_in_file(
+                self,
                 os.path.join(self.source_folder, "meson.build"),
                 "libintl = dependency('intl', required: false",
                 "libintl = dependency('libgettext', method : 'pkg-config', required : false",
             )
 
-        replace_in_file(self,
+        replace_in_file(
+            self,
             os.path.join(
                 self.source_folder,
                 "gio",
@@ -153,10 +156,7 @@ class GLibConan(ConanFile):
     def package_info(self):
         self.cpp_info.components["glib-2.0"].set_property("pkg_config_name", "glib-2.0")
         self.cpp_info.components["glib-2.0"].libs = ["glib-2.0"]
-        self.cpp_info.components["glib-2.0"].includedirs += [
-            os.path.join("include", "glib-2.0"),
-            os.path.join("lib", "glib-2.0", "include")
-        ]
+        self.cpp_info.components["glib-2.0"].includedirs += [os.path.join("include", "glib-2.0"), os.path.join("lib", "glib-2.0", "include")]
         self.cpp_info.components["glib-2.0"].resdirs = ["res"]
 
         self.cpp_info.components["gmodule-no-export-2.0"].set_property("pkg_config_name", "gmodule-no-export-2.0")
@@ -236,38 +236,36 @@ class GLibConan(ConanFile):
         self.env_info.PATH.append(os.path.join(self.package_folder, "bin"))
 
         pkgconfig_variables = {
-            'datadir': '${prefix}/res',
-            'schemasdir': '${datadir}/glib-2.0/schemas',
-            'bindir': '${prefix}/bin',
+            "datadir": "${prefix}/res",
+            "schemasdir": "${datadir}/glib-2.0/schemas",
+            "bindir": "${prefix}/bin",
             # Can't use libdir here as it is libdir1 when using the PkgConfigDeps generator.
-            'giomoduledir': '${prefix}/lib/gio/modules',
-            'gio': '${bindir}/gio',
-            'gio_querymodules': '${bindir}/gio-querymodules',
-            'glib_compile_schemas': '${bindir}/glib-compile-schemas',
-            'glib_compile_resources': '${bindir}/glib-compile-resources',
-            'gdbus': '${bindir}/gdbus',
-            'gdbus_codegen': '${bindir}/gdbus-codegen',
-            'gresource': '${bindir}/gresource',
-            'gsettings': '${bindir}/gsettings'
+            "giomoduledir": "${prefix}/lib/gio/modules",
+            "gio": "${bindir}/gio",
+            "gio_querymodules": "${bindir}/gio-querymodules",
+            "glib_compile_schemas": "${bindir}/glib-compile-schemas",
+            "glib_compile_resources": "${bindir}/glib-compile-resources",
+            "gdbus": "${bindir}/gdbus",
+            "gdbus_codegen": "${bindir}/gdbus-codegen",
+            "gresource": "${bindir}/gresource",
+            "gsettings": "${bindir}/gsettings",
         }
-        self.cpp_info.components["gio-2.0"].set_property(
-            "pkg_config_custom_content",
-            "\n".join(f"{key}={value}" for key,value in pkgconfig_variables.items()))
+        self.cpp_info.components["gio-2.0"].set_property("pkg_config_custom_content", "\n".join(f"{key}={value}" for key, value in pkgconfig_variables.items()))
 
         pkgconfig_variables = {
-            'bindir': '${prefix}/bin',
-            'glib_genmarshal': '${bindir}/glib-genmarshal',
-            'gobject_query': '${bindir}/gobject-query',
-            'glib_mkenums': '${bindir}/glib-mkenums'
+            "bindir": "${prefix}/bin",
+            "glib_genmarshal": "${bindir}/glib-genmarshal",
+            "gobject_query": "${bindir}/gobject-query",
+            "glib_mkenums": "${bindir}/glib-mkenums",
         }
-        self.cpp_info.components["glib-2.0"].set_property(
-            "pkg_config_custom_content",
-            "\n".join(f"{key}={value}" for key, value in pkgconfig_variables.items()))
+        self.cpp_info.components["glib-2.0"].set_property("pkg_config_custom_content", "\n".join(f"{key}={value}" for key, value in pkgconfig_variables.items()))
+
 
 def fix_msvc_libname(conanfile, remove_lib_prefix=True):
     """remove lib prefix & change extension to .lib in case of cl like compiler"""
     from conan.tools.files import rename
     import glob
+
     if not conanfile.settings.get_safe("compiler.runtime"):
         return
     libdirs = getattr(conanfile.cpp.package, "libdirs")
@@ -275,7 +273,7 @@ def fix_msvc_libname(conanfile, remove_lib_prefix=True):
         for ext in [".dll.a", ".dll.lib", ".a"]:
             full_folder = os.path.join(conanfile.package_folder, libdir)
             for filepath in glob.glob(os.path.join(full_folder, f"*{ext}")):
-                libname = os.path.basename(filepath)[0:-len(ext)]
+                libname = os.path.basename(filepath)[0 : -len(ext)]
                 if remove_lib_prefix and libname[0:3] == "lib":
                     libname = libname[3:]
                 rename(conanfile, filepath, os.path.join(os.path.dirname(filepath), f"{libname}.lib"))
