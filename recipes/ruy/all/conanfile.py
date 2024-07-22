@@ -60,7 +60,10 @@ class RuyConan(ConanFile):
             self.options.rm_safe("fPIC")
 
     def requirements(self):
-        self.requires("cpuinfo/cci.20231129")
+        if self.version == "cci.20220628":
+            self.requires("cpuinfo/cci.20220228")
+        else:
+            self.requires("cpuinfo/cci.20231129")
 
     def layout(self):
         cmake_layout(self, src_folder="src")
