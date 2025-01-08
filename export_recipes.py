@@ -24,12 +24,13 @@ def upload_recipe(package_name: str, remote: str, version='*', force = False):
     cmd.append(f"{package_name}/{version}")
     subprocess.run(cmd)
 
-def export_all(root_path: Path, remote: str, force: bool):
+def export_all(root_path: Path, remote: str, force: bool, dry_run: bool):
     subfolders = [f.path for f in os.scandir(root_path) if f.is_dir()]
     for folder in subfolders:
         package_name = os.path.basename(folder)
         export_recipe(Path(folder))
-        upload_recipe(package_name, remote, '*', force) 
+        if not dry_run:
+            upload_recipe(package_name, remote, '*', force) 
     
 
 def main():
@@ -38,14 +39,16 @@ def main():
     parser.add_argument('--remote', default='conan-center-local', help='Remote that recipes will be uploaded to')
     parser.add_argument('--recipe', default='', help='Export single recipe')
     parser.add_argument('--force', action='store_true', help='force reupload of recipe(s)')
+    parser.add_argument('--dry-run', action='store_true', help='Skip upload stage')
 
     args = parser.parse_args()
     if args.recipe == '':
         #export all versions of all recipes
-        export_all('./recipes', args.remote, args.force)
+        export_all('./recipes', args.remote, args.force, args.dry_run)
     else:
         export_recipe(Path(f'./recipes/{args.recipe}'))
-        upload_recipe(args.recipe, args.remote, '*', args.force)
+        if not args.dry_run:
+            upload_recipe(args.recipe, args.remote, '*', args.force)
 
 if __name__ == '__main__':
     main()
