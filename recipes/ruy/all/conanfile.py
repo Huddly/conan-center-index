@@ -61,7 +61,7 @@ class RuyConan(ConanFile):
 
     def requirements(self):
         if self.version == "cci.20220628":
-            self.requires("cpuinfo/cci.20220228")
+            self.requires("cpuinfo/cci.20220618")
         else:
             self.requires("cpuinfo/cci.20231129")
 
