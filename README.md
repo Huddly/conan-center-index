@@ -26,3 +26,8 @@ Export and upload a single recipe
 ```
 python export_recipes.py --recipe _recipename_
 ```
+
+## Uploading recipes in conan-center-local
+
+In order to use the updated recipes in falcon-dependencies and downstream projects, the recipes must be uploaded to conan-center-local. Since regular users do not have write permission to this remote, the upload must be done by a user with the correct priveleges. A special jenkins pipeline exists for this purpose (https://ci.huddly.io/job/conan-center-index/). Start this pipeline in order to upload all recipes.
+
